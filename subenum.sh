@@ -39,74 +39,82 @@ Usage(){
 	\r$blue
 	\r#Options:
 	\r 	-d, --domain\t Domain To Enumerate
-	\r	-u, --use\t Tools To Be Used ex(Findomain,Subfinder,...,etc)
 	\r	-l, --list\t List of domains
+	\r	-u, --use\t Tools To Be Used ex(Findomain,Subfinder,...,etc)
 	\r	-e, --exclude\t Tools To Be Excluded ex(Findomain,Amass,...,etc)
-	\r	-o, --output\t The output file to save the Final Results (Default: alldomains-<TargetName>)
+	\r	-o, --output\t The output file to save the Final Results (Default: <TargetDomain>-DATE-TIME.txt)
 	\r	-k, --keep\t To Keep the TMPs files (the results from each tool).
-	\r	-v, --version\t Displays the version and exit.
 	\r	-h, --help\t Displays this help message and exit.
+	\r	-v, --version\t Displays the version and exit.
 
 	\r#Available Tools:
 	\r	wayback,crt,bufferover,Findomain,Subfinder,Amass,Assetfinder
 
-	\r#Example:
+	\r#Examples:
 	\r	- To use a specific Tools:
 	\r		$PRG -d hackerone.com -u Findomain,wayback,Subfinder
 	\r	- To exclude a specific Tools:
 	\r		$PRG -d hackerone.com -e Amass,Assetfinder
 	\r	- To use all the Tools:
-	\r		$PRG -d hackerone.com $end 
+	\r		$PRG -d hackerone.com 
+	\r	- To run SubEnum.sh against a list of domains:
+	\r		$PRG -l domains.txt
+	\r $end
 EOF
 	exit 1
 }
 
 
 wayback() { 
-	echo -e "$bold[+] WayBackMachine$end"
+	printf "$bold[+] WayBackMachine$end"
+	printf "                        \r"
 	curl -sk "http://web.archive.org/cdx/search/cdx?url=*.$domain&output=txt&fl=original&collapse=urlkey&page=" | awk -F/ '{gsub(/:.*/, "", $3); print $3}' | sort -u > tmp-wayback-$domain
-	echo -e "[*] Results: $(wc -l tmp-wayback-$domain)\n" 	
+	echo -e "$bold[*] WayBackMachine$end: $(wc -l < tmp-wayback-$domain)" 	
 }
 
 crt() {
-	echo -e "$bold[+] crt.sh$end"
+	printf "$bold[+] crt.sh$end"
+	printf "                        \r"
 	curl -sk "https://crt.sh/?q=%.$domain&output=json&exclude=expired" | tr ',' '\n' | awk -F'"' '/name_value/ {gsub(/\*\./, "", $4); gsub(/\\n/,"\n",$4);print $4}' | sort -u > tmp-crt-$domain
-	echo -e "[*] Results: $(wc -l tmp-crt-$domain)\n" 
+	echo -e "$bold[*] crt.sh$end: $(wc -l < tmp-crt-$domain)" 
 }
 
 bufferover() {
-	echo -e $bold"[+] BufferOver"$end
+	printf "$bold[+] BufferOver$end"
+	printf "                        \r"
 	curl -s "https://dns.bufferover.run/dns?q=.$domain" | grep $domain | awk -F, '{gsub("\"", "", $2); print $2}' | sort -u > tmp-bufferover-$domain
-	echo -e "[*] Results: $(wc -l tmp-bufferover-$domain)\n"
+	echo -e "$bold[*] BufferOver$end: $(wc -l < tmp-bufferover-$domain)"
 }
 
 Findomain() {
-	echo -e $bold"[+] Findomain"$end
+	printf "$bold[+] Findomain$end"
+	printf "                        \r"
 	findomain -t $domain -u tmp-findomain-$domain &>/dev/null
-	echo -e "[*] Results: $(wc -l tmp-findomain-$domain 2>/dev/null)\n"
+	echo -e "$bold[*] Findomain$end: $(wc -l tmp-findomain-$domain | awk '{print $1}' 2>/dev/null)"
 }
 
 Subfinder() {
-	echo -e $bold"[+] SubFinder"$end
+	printf "$bold[+] SubFinder$end"
+	printf "                        \r"
 	subfinder -silent -d $domain 1> tmp-subfinder-$domain 2>/dev/null
-	echo -e "[*] Results: $(wc -l tmp-subfinder-$domain)\n"
+	echo -e "$bold[*] SubFinder$end: $(wc -l < tmp-subfinder-$domain)"
 }
 
 
 
 Amass() {
-	echo -e $bold"[+] Amass"$end
+	printf "$bold[+] Amass$end"
+	printf "                        \r"
 	amass enum -norecursive -noalts -d $domain 1> tmp-amass-$domain 2>/dev/null
-	echo -e "[*] Results: $(wc -l tmp-amass-$domain)\n"
+	echo -e "$bold[*] Amass$end: $(wc -l < tmp-amass-$domain)"
 }
 
 Assetfinder() {
-	echo -e $bold"[+] Assetfinder"$end
+	printf "$bold[+] AssetFinder$end"
+	printf "                        \r"
 	assetfinder --subs-only $domain > tmp-assetfinder-$domain
-	echo -e "[*] Results: $(wc -l tmp-assetfinder-$domain)\n"
+	echo -e "$bold[*] AssetFinder$end: $(wc -l < tmp-assetfinder-$domain)"
 }
-
-
 
 
 USE() {
