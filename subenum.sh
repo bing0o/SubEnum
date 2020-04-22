@@ -75,7 +75,7 @@ wayback() {
 crt() {
 	printf "$bold[+] crt.sh$end"
 	printf "                        \r"
-	curl -sk "https://crt.sh/?q=%.$domain&output=json&exclude=expired" | tr ',' '\n' | awk -F'"' '/name_value/ {gsub(/\*\./, "", $4); gsub(/\\n/,"\n",$4);print $4}' | sort -u > tmp-crt-$domain
+	curl -sk "https://crt.sh/?q=%.$domain&output=json" | tr ',' '\n' | awk -F'"' '/name_value/ {gsub(/\*\./, "", $4); gsub(/\\n/,"\n",$4);print $4}' | sort -u > tmp-crt-$domain
 	echo -e "$bold[*] crt.sh$end: $(wc -l < tmp-crt-$domain)" 
 }
 
