@@ -15,10 +15,8 @@ Underlined="\e[4m"
 red="\e[31m"
 green="\e[32m"
 blue="\e[34m"
-#grey="\e[90m"
 end="\e[0m"
-ugb=""
-VERSION="2020-04-07"
+VERSION="2020-05-15"
 
 PRG=${0##*/}
 
@@ -28,7 +26,7 @@ echo -e $blue$bold"
 \___ \| | | | '_ \|  _| | '_ \| | | | '_ \` _ \\ 
  ___) | |_| | |_) | |___| | | | |_| | | | | | |
 |____/ \__,_|_.__/|_____|_| |_|\__,_|_| |_| |_|
-           SubDomains enumeration tool
+           SubDomains Enumeration Tool
               By: bing0o @hack1lab
 "$end
 
@@ -38,27 +36,29 @@ Usage(){
 	done <<-EOF
 	\r$blue
 	\r#Options:
-	\r 	-d, --domain\t Domain To Enumerate
-	\r	-l, --list\t List of domains
-	\r	-u, --use\t Tools To Be Used ex(Findomain,Subfinder,...,etc)
-	\r	-e, --exclude\t Tools To Be Excluded ex(Findomain,Amass,...,etc)
-	\r	-o, --output\t The output file to save the Final Results (Default: <TargetDomain>-DATE-TIME.txt)
-	\r	-k, --keep\t To Keep the TMPs files (the results from each tool).
-	\r	-h, --help\t Displays this help message and exit.
-	\r	-v, --version\t Displays the version and exit.
+	\r    -d, --domain       - Domain To Enumerate
+	\r    -l, --list         - List of domains
+	\r    -u, --use          - Tools To Be Used ex(Findomain,Subfinder,...,etc)
+	\r    -e, --exclude      - Tools To Be Excluded ex(Findomain,Amass,...,etc)
+	\r    -o, --output       - The output file to save the Final Results (Default: <TargetDomain>-DATE-TIME.txt)
+	\r    -k, --keep         - To Keep the TMPs files (the results from each tool).
+	\r    -r, --resolve      - To Probe For Working HTTP and HTTPS Subdomains, (Output: resolved-<DOMAIN>.txt).
+	\r    -t, --thread       - Threads for Httprobe - works with -r/--resolve option (Default: 40)
+	\r    -h, --help         - Displays this help message and exit.
+	\r    -v, --version      - Displays the version and exit.
 
 	\r#Available Tools:
-	\r	wayback,crt,bufferover,Findomain,Subfinder,Amass,Assetfinder
+	\r	  wayback,crt,bufferover,Findomain,Subfinder,Amass,Assetfinder
 
 	\r#Examples:
-	\r	- To use a specific Tools:
-	\r		$PRG -d hackerone.com -u Findomain,wayback,Subfinder
-	\r	- To exclude a specific Tools:
-	\r		$PRG -d hackerone.com -e Amass,Assetfinder
-	\r	- To use all the Tools:
-	\r		$PRG -d hackerone.com 
-	\r	- To run SubEnum.sh against a list of domains:
-	\r		$PRG -l domains.txt
+	\r	  - To use a specific Tools:
+	\r		 $PRG -d hackerone.com -u Findomain,wayback,Subfinder
+	\r	  - To exclude a specific Tools:
+	\r		 $PRG -d hackerone.com -e Amass,Assetfinder
+	\r	  - To use all the Tools:
+	\r		 $PRG -d hackerone.com 
+	\r	  - To run SubEnum.sh against a list of domains:
+	\r		 $PRG -l domains.txt
 	\r $end
 EOF
 	exit 1
@@ -90,7 +90,7 @@ Findomain() {
 	printf "$bold[+] Findomain$end"
 	printf "                        \r"
 	findomain -t $domain -u tmp-findomain-$domain &>/dev/null
-	echo -e "$bold[*] Findomain$end: $(wc -l tmp-findomain-$domain | awk '{print $1}' 2>/dev/null)"
+	echo -e "$bold[*] Findomain$end: $(wc -l tmp-findomain-$domain 2>/dev/null | awk '{print $1}')"
 }
 
 Subfinder() {
@@ -103,9 +103,10 @@ Subfinder() {
 
 
 Amass() {
+	# amass is with "-passive" option to make it faster, but it may cuz less results
 	printf "$bold[+] Amass$end"
 	printf "                        \r"
-	amass enum -norecursive -noalts -d $domain 1> tmp-amass-$domain 2>/dev/null
+	amass enum -passive -norecursive -noalts -d $domain 1> tmp-amass-$domain 2>/dev/null
 	echo -e "$bold[*] Amass$end: $(wc -l < tmp-amass-$domain)"
 }
 
@@ -139,16 +140,27 @@ EXCLUDE() {
 OUT(){
 	[ -n "$1" ] && out="$1" || out="$domain-$(date +'%Y-%m-%d-%H%M%S').txt"
 	sort -u tmp-* > $out
-	echo -e $green"[+] The Final Results:$end $(wc -l $out)\n"
+	echo -e $green"[+] The Final Results:$end $(wc -l $out)"
+	[ $resolve == True ] && ALIVE "$out" "$domain"
 
 	[ $delete == True ] && rm tmp-*	
 }
+
+
+ALIVE(){
+	printf "$bold[+] Resolving $end"
+	printf "                        \r"
+	cat $1 | httprobe -c $thread > "resolved-$2.txt"
+	echo -e $green"[+] Resolved:$end $(wc -l < resolved-$2.txt)"
+
+}
+
 
 LIST() {
 	lines=$(wc -l < $hosts)
 	count=1
 	while read domain; do
-		echo -e "$Underlined$bold$green[+] Domain ($count/$lines):$end $domain"
+		echo -e "$Underlined$bold$green\n[+] Domain ($count/$lines):$end $domain"
 		[ $prv == "a" ] && {
 			wayback
 			crt
@@ -198,6 +210,8 @@ use=False
 exclude=False
 delete=True
 out=False
+resolve=False
+thread=40
 
 list=(
 	wayback
@@ -242,6 +256,11 @@ while [ -n "$1" ]; do
 			shift ;;
 		-k|--keep)
 			delete=False ;;
+		-r|--resolve)
+			resolve=True ;;
+		-t|--thread)
+			thread=$2
+			shift ;;
 		-h|--help)
 			Usage;;
 		-v|--version)
@@ -249,7 +268,7 @@ while [ -n "$1" ]; do
 			exit 0 ;;
 		*)
 			echo "[-] Unknown Option: $1"
-			Usage;;
+			Usage ;;
 	esac
 	shift
 done
