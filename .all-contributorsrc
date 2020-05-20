@@ -1,0 +1,24 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "secfb",
+      "name": "Never Mind",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/38748801?v=4",
+      "profile": "https://github.com/secfb",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "SubEnum",
+  "projectOwner": "bing0o",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
