@@ -62,9 +62,6 @@ $ subenum -l domains.txt -u crt,bufferover
 happy hacking!
 
 
-## thanks goes to:
-
-[@secfb](https://github.com/secfb): for the idea of adding the option `-r/--resolve` to resolve the found subdomains, [issue](https://github.com/bing0o/SubEnum/issues/1).
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
