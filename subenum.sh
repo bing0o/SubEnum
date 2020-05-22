@@ -138,7 +138,7 @@ EXCLUDE() {
 }
 
 OUT(){
-	[ -n "$1" ] && out="$1" || out="$domain-$(date +'%Y-%m-%d').txt"
+	[ "$out" == False ] && out="$domain-$(date +'%Y-%m-%d').txt"
 	sort -u tmp-* > $out
 	echo -e $green"[+] The Final Results:$end $(wc -l $out)"
 	[ $resolve == True ] && ALIVE "$out" "$domain"
