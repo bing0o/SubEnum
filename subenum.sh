@@ -150,7 +150,7 @@ OUT(){
 ALIVE(){
 	printf "$bold[+] Resolving $end"
 	printf "                        \r"
-	cat $1 | httprobe -c $thread > "resolved-$2.txt"
+	cat $1 | httprobe --prefer-https -c $thread > "resolved-$2.txt"
 	echo -e $green"[+] Resolved:$end $(wc -l < resolved-$2.txt)"
 
 }
