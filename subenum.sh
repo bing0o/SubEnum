@@ -138,7 +138,7 @@ EXCLUDE() {
 }
 
 OUT(){
-	[ "$out" == False ] && out="$domain-$(date +'%Y-%m-%d').txt"
+	[ -n "$1" ] && out="$1" || out="$domain-$(date +'%Y-%m-%d').txt"
 	sort -u tmp-* > $out
 	echo -e $green"[+] The Final Results:$end $(wc -l $out)"
 	[ $resolve == True ] && ALIVE "$out" "$domain"
@@ -189,7 +189,7 @@ Main() {
 			Subfinder 
 			Amass 
 			Assetfinder
-			OUT
+			[ "$out" == False ] && OUT || OUT $out
 		} || { 
 			[ $use != False ] && USE 
 			[ $exclude != False ] && EXCLUDE
