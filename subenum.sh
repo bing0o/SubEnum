@@ -32,7 +32,7 @@ Usage(){
 	\r    -u, --use          - Tools To Be Used ex(Findomain,Subfinder,...,etc)
 	\r    -e, --exclude      - Tools To Be Excluded ex(Findomain,Amass,...,etc)
 	\r    -o, --output       - The output file to save the Final Results (Default: <TargetDomain>-DATE-TIME.txt)
-	\r    -s, --silent       - Print Subdomains without saving and without sort -u.
+	\r    -s, --silent       - The Only output will be the found subdomains - (use: sort -u).
 	\r    -k, --keep         - To Keep the TMPs files (the results from each tool).
 	\r    -r, --resolve      - To Probe For Working HTTP and HTTPS Subdomains, (Output: resolved-<DOMAIN>.txt).
 	\r    -t, --thread       - Threads for Httprobe - works with -r/--resolve option (Default: 40)
@@ -106,7 +106,7 @@ Subfinder() {
 
 Amass() {
 	# amass is with "-passive" option to make it faster, but it may cuz less results
-	[ "$silent" == True ] && amass enum -passive -norecursive -noalts -d $domain | tee 2>/dev/null || {
+	[ "$silent" == True ] && amass enum -passive -norecursive -noalts -d $domain 2>/dev/null | tee || {
 		printf "$bold[+] Amass$end"
 		printf "                        \r"
 		amass enum -passive -norecursive -noalts -d $domain 1> tmp-amass-$domain 2>/dev/null
