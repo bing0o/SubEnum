@@ -16,19 +16,10 @@ red="\e[31m"
 green="\e[32m"
 blue="\e[34m"
 end="\e[0m"
-VERSION="2020-05-15"
+VERSION="2020-07-11"
 
 PRG=${0##*/}
 
-echo -e $blue$bold"
- ____        _     _____                       
-/ ___| _   _| |__ | ____|_ __  _   _ _ __ ___  
-\___ \| | | | '_ \|  _| | '_ \| | | | '_ \` _ \\ 
- ___) | |_| | |_) | |___| | | | |_| | | | | | |
-|____/ \__,_|_.__/|_____|_| |_|\__,_|_| |_| |_|
-           SubDomains Enumeration Tool
-              By: bing0o @hack1lab
-"$end
 
 Usage(){
 	while read -r line; do
@@ -41,6 +32,7 @@ Usage(){
 	\r    -u, --use          - Tools To Be Used ex(Findomain,Subfinder,...,etc)
 	\r    -e, --exclude      - Tools To Be Excluded ex(Findomain,Amass,...,etc)
 	\r    -o, --output       - The output file to save the Final Results (Default: <TargetDomain>-DATE-TIME.txt)
+	\r    -s, --silent       - Print Subdomains without saving and without sort -u.
 	\r    -k, --keep         - To Keep the TMPs files (the results from each tool).
 	\r    -r, --resolve      - To Probe For Working HTTP and HTTPS Subdomains, (Output: resolved-<DOMAIN>.txt).
 	\r    -t, --thread       - Threads for Httprobe - works with -r/--resolve option (Default: 40)
@@ -66,55 +58,69 @@ EOF
 
 
 wayback() { 
-	printf "$bold[+] WayBackMachine$end"
-	printf "                        \r"
-	curl -sk "http://web.archive.org/cdx/search/cdx?url=*.$domain&output=txt&fl=original&collapse=urlkey&page=" | awk -F/ '{gsub(/:.*/, "", $3); print $3}' | sort -u > tmp-wayback-$domain
-	echo -e "$bold[*] WayBackMachine$end: $(wc -l < tmp-wayback-$domain)" 	
+	[ "$silent" == True ] && curl -sk "http://web.archive.org/cdx/search/cdx?url=*.$domain&output=txt&fl=original&collapse=urlkey&page=" | awk -F/ '{gsub(/:.*/, "", $3); print $3}' | sort -u || {
+		printf "$bold[+] WayBackMachine$end"
+		printf "                        \r"
+		curl -sk "http://web.archive.org/cdx/search/cdx?url=*.$domain&output=txt&fl=original&collapse=urlkey&page=" | awk -F/ '{gsub(/:.*/, "", $3); print $3}' | sort -u > tmp-wayback-$domain
+		echo -e "$bold[*] WayBackMachine$end: $(wc -l < tmp-wayback-$domain)"
+	}
 }
 
 crt() {
-	printf "$bold[+] crt.sh$end"
-	printf "                        \r"
-	curl -sk "https://crt.sh/?q=%.$domain&output=json" | tr ',' '\n' | awk -F'"' '/name_value/ {gsub(/\*\./, "", $4); gsub(/\\n/,"\n",$4);print $4}' | sort -u > tmp-crt-$domain
-	echo -e "$bold[*] crt.sh$end: $(wc -l < tmp-crt-$domain)" 
+	[ "$silent" == True ] && curl -sk "https://crt.sh/?q=%.$domain&output=json" | tr ',' '\n' | awk -F'"' '/name_value/ {gsub(/\*\./, "", $4); gsub(/\\n/,"\n",$4);print $4}' | sort -u || {
+		printf "$bold[+] crt.sh$end"
+		printf "                        \r"
+		curl -sk "https://crt.sh/?q=%.$domain&output=json" | tr ',' '\n' | awk -F'"' '/name_value/ {gsub(/\*\./, "", $4); gsub(/\\n/,"\n",$4);print $4}' | sort -u > tmp-crt-$domain
+		echo -e "$bold[*] crt.sh$end: $(wc -l < tmp-crt-$domain)" 
+	}
 }
 
 bufferover() {
-	printf "$bold[+] BufferOver$end"
-	printf "                        \r"
-	curl -s "https://dns.bufferover.run/dns?q=.$domain" | grep $domain | awk -F, '{gsub("\"", "", $2); print $2}' | sort -u > tmp-bufferover-$domain
-	echo -e "$bold[*] BufferOver$end: $(wc -l < tmp-bufferover-$domain)"
+	[ "$silent" == True ] && curl -s "https://dns.bufferover.run/dns?q=.$domain" | grep $domain | awk -F, '{gsub("\"", "", $2); print $2}' | sort -u || {
+		printf "$bold[+] BufferOver$end"
+		printf "                        \r"
+		curl -s "https://dns.bufferover.run/dns?q=.$domain" | grep $domain | awk -F, '{gsub("\"", "", $2); print $2}' | sort -u > tmp-bufferover-$domain
+		echo -e "$bold[*] BufferOver$end: $(wc -l < tmp-bufferover-$domain)"
+	}
 }
 
 Findomain() {
-	printf "$bold[+] Findomain$end"
-	printf "                        \r"
-	findomain -t $domain -u tmp-findomain-$domain &>/dev/null
-	echo -e "$bold[*] Findomain$end: $(wc -l tmp-findomain-$domain 2>/dev/null | awk '{print $1}')"
+	[ "$silent" == True ] && findomain -t $domain -q 2>/dev/null || {
+		printf "$bold[+] Findomain$end"
+		printf "                        \r"
+		findomain -t $domain -u tmp-findomain-$domain &>/dev/null
+		echo -e "$bold[*] Findomain$end: $(wc -l tmp-findomain-$domain 2>/dev/null | awk '{print $1}')"
+	}
 }
 
 Subfinder() {
-	printf "$bold[+] SubFinder$end"
-	printf "                        \r"
-	subfinder -silent -d $domain 1> tmp-subfinder-$domain 2>/dev/null
-	echo -e "$bold[*] SubFinder$end: $(wc -l < tmp-subfinder-$domain)"
+	[ "$silent" == True ] && subfinder -silent -d $domain 2>/dev/null || {
+		printf "$bold[+] SubFinder$end"
+		printf "                        \r"
+		subfinder -silent -d $domain 1> tmp-subfinder-$domain 2>/dev/null
+		echo -e "$bold[*] SubFinder$end: $(wc -l < tmp-subfinder-$domain)"
+	}
 }
 
 
 
 Amass() {
 	# amass is with "-passive" option to make it faster, but it may cuz less results
-	printf "$bold[+] Amass$end"
-	printf "                        \r"
-	amass enum -passive -norecursive -noalts -d $domain 1> tmp-amass-$domain 2>/dev/null
-	echo -e "$bold[*] Amass$end: $(wc -l < tmp-amass-$domain)"
+	[ "$silent" == True ] && amass enum -passive -norecursive -noalts -d $domain | tee 2>/dev/null || {
+		printf "$bold[+] Amass$end"
+		printf "                        \r"
+		amass enum -passive -norecursive -noalts -d $domain 1> tmp-amass-$domain 2>/dev/null
+		echo -e "$bold[*] Amass$end: $(wc -l < tmp-amass-$domain)"
+	}
 }
 
 Assetfinder() {
-	printf "$bold[+] AssetFinder$end"
-	printf "                        \r"
-	assetfinder --subs-only $domain > tmp-assetfinder-$domain
-	echo -e "$bold[*] AssetFinder$end: $(wc -l < tmp-assetfinder-$domain)"
+	[ "$silent" == True ] && assetfinder --subs-only $domain || {
+		printf "$bold[+] AssetFinder$end"
+		printf "                        \r"
+		assetfinder --subs-only $domain > tmp-assetfinder-$domain
+		echo -e "$bold[*] AssetFinder$end: $(wc -l < tmp-assetfinder-$domain)"
+	}
 }
 
 
@@ -138,20 +144,22 @@ EXCLUDE() {
 }
 
 OUT(){
-	[ -n "$1" ] && out="$1" || out="$domain-$(date +'%Y-%m-%d').txt"
-	sort -u tmp-* > $out
-	echo -e $green"[+] The Final Results:$end $(wc -l $out)"
-	[ $resolve == True ] && ALIVE "$out" "$domain"
+	[ "$silent" == False ] && { 
+		[ -n "$1" ] && out="$1" || out="$domain-$(date +'%Y-%m-%d').txt"
+		sort -u tmp-* > $out
+		echo -e $green"[+] The Final Results:$end $(wc -l $out)"
+		[ $resolve == True ] && ALIVE "$out" "$domain"
 
-	[ $delete == True ] && rm tmp-*	
+		[ $delete == True ] && rm tmp-*	
+	}
 }
 
 
 ALIVE(){
-	printf "$bold[+] Resolving $end"
+	[ "$silent" == False ] && printf "$bold[+] Resolving $end"
 	printf "                        \r"
 	cat $1 | httprobe -c $thread > "resolved-$2.txt"
-	echo -e $green"[+] Resolved:$end $(wc -l < resolved-$2.txt)"
+	[ "$silent" == False ] && echo -e $green"[+] Resolved:$end $(wc -l < resolved-$2.txt)"
 
 }
 
@@ -160,7 +168,7 @@ LIST() {
 	lines=$(wc -l < $hosts)
 	count=1
 	while read domain; do
-		echo -e "$Underlined$bold$green\n[+] Domain ($count/$lines):$end $domain"
+		[ "$silent" == False ] && echo -e "$Underlined$bold$green\n[+] Domain ($count/$lines):$end $domain"
 		[ $prv == "a" ] && {
 			wayback
 			crt
@@ -208,6 +216,7 @@ domain=False
 hosts=False
 use=False
 exclude=False
+silent=False
 delete=True
 out=False
 resolve=False
@@ -254,6 +263,8 @@ while [ -n "$1" ]; do
 		-o|--output)
 			out=$2
 			shift ;;
+		-s|--silent)
+			silent=True ;;
 		-k|--keep)
 			delete=False ;;
 		-r|--resolve)
@@ -272,5 +283,15 @@ while [ -n "$1" ]; do
 	esac
 	shift
 done
+
+[ "$silent" == False ] && echo -e $blue$bold"
+ ____        _     _____                       
+/ ___| _   _| |__ | ____|_ __  _   _ _ __ ___  
+\___ \| | | | '_ \|  _| | '_ \| | | | '_ \` _ \\ 
+ ___) | |_| | |_) | |___| | | | |_| | | | | | |
+|____/ \__,_|_.__/|_____|_| |_|\__,_|_| |_| |_|
+           SubDomains Enumeration Tool
+              By: bing0o @hack1lab
+"$end
 
 Main
