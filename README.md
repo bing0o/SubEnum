@@ -14,7 +14,8 @@ bash script for Subdomain Enumeration using 4 tools and 3 APIs, you have to inst
 	- [SubFinder](https://github.com/projectdiscovery/subfinder)
 	- [Amass](https://github.com/OWASP/Amass)
 	- [AssetFinder](https://github.com/tomnomnom/assetfinder)
-	- [Httprobe](https://github.com/tomnomnom/httprobe), To Probe For Working HTTP and HTTPS Subdomains.
+	- [Httprobe](https://github.com/tomnomnom/httprobe): To Probe For Working HTTP and HTTPS Subdomains.
+	- [anew](https://github.com/tomnomnom/anew): To delete duplicates when using -s/--silent option.
 1. APIs:
 	- [WayBackMachine](http://web.archive.org/)
 	- [crt.sh](https://crt.sh/)
@@ -57,6 +58,20 @@ exclude and use can be used with list of domains too
 
 ```bash
 $ subenum -l domains.txt -u crt,bufferover
+```
+
+
+### Silent:
+
+this option helps when you want to pipe the results to another tool, or just to avoid the useless output.
+
+```bash
+$ subenum -d target.com -s 
+dev.target.com
+admin.target.com
+api.target.com
+..
+..
 ```
 
 happy hacking!
