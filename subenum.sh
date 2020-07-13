@@ -16,7 +16,7 @@ red="\e[31m"
 green="\e[32m"
 blue="\e[34m"
 end="\e[0m"
-VERSION="2020-07-11"
+VERSION="2020-05-15"
 
 PRG=${0##*/}
 
@@ -32,7 +32,7 @@ Usage(){
 	\r    -u, --use          - Tools To Be Used ex(Findomain,Subfinder,...,etc)
 	\r    -e, --exclude      - Tools To Be Excluded ex(Findomain,Amass,...,etc)
 	\r    -o, --output       - The output file to save the Final Results (Default: <TargetDomain>-DATE-TIME.txt)
-	\r    -s, --silent       - The Only output will be the found subdomains - (use: sort -u).
+	\r    -s, --silent       - The Only output will be the found subdomains - (Results saved: subenum-<DOMAIN>.txt).
 	\r    -k, --keep         - To Keep the TMPs files (the results from each tool).
 	\r    -r, --resolve      - To Probe For Working HTTP and HTTPS Subdomains, (Output: resolved-<DOMAIN>.txt).
 	\r    -t, --thread       - Threads for Httprobe - works with -r/--resolve option (Default: 40)
@@ -58,7 +58,7 @@ EOF
 
 
 wayback() { 
-	[ "$silent" == True ] && curl -sk "http://web.archive.org/cdx/search/cdx?url=*.$domain&output=txt&fl=original&collapse=urlkey&page=" | awk -F/ '{gsub(/:.*/, "", $3); print $3}' | sort -u || {
+	[ "$silent" == True ] && curl -sk "http://web.archive.org/cdx/search/cdx?url=*.$domain&output=txt&fl=original&collapse=urlkey&page=" | awk -F/ '{gsub(/:.*/, "", $3); print $3}' | sort -u | anew subenum-$domain.txt  || {
 		printf "$bold[+] WayBackMachine$end"
 		printf "                        \r"
 		curl -sk "http://web.archive.org/cdx/search/cdx?url=*.$domain&output=txt&fl=original&collapse=urlkey&page=" | awk -F/ '{gsub(/:.*/, "", $3); print $3}' | sort -u > tmp-wayback-$domain
@@ -67,7 +67,7 @@ wayback() {
 }
 
 crt() {
-	[ "$silent" == True ] && curl -sk "https://crt.sh/?q=%.$domain&output=json" | tr ',' '\n' | awk -F'"' '/name_value/ {gsub(/\*\./, "", $4); gsub(/\\n/,"\n",$4);print $4}' | sort -u || {
+	[ "$silent" == True ] && curl -sk "https://crt.sh/?q=%.$domain&output=json" | tr ',' '\n' | awk -F'"' '/name_value/ {gsub(/\*\./, "", $4); gsub(/\\n/,"\n",$4);print $4}' | anew subenum-$domain.txt || {
 		printf "$bold[+] crt.sh$end"
 		printf "                        \r"
 		curl -sk "https://crt.sh/?q=%.$domain&output=json" | tr ',' '\n' | awk -F'"' '/name_value/ {gsub(/\*\./, "", $4); gsub(/\\n/,"\n",$4);print $4}' | sort -u > tmp-crt-$domain
@@ -76,7 +76,7 @@ crt() {
 }
 
 bufferover() {
-	[ "$silent" == True ] && curl -s "https://dns.bufferover.run/dns?q=.$domain" | grep $domain | awk -F, '{gsub("\"", "", $2); print $2}' | sort -u || {
+	[ "$silent" == True ] && curl -s "https://dns.bufferover.run/dns?q=.$domain" | grep $domain | awk -F, '{gsub("\"", "", $2); print $2}' | anew subenum-$domain.txt || {
 		printf "$bold[+] BufferOver$end"
 		printf "                        \r"
 		curl -s "https://dns.bufferover.run/dns?q=.$domain" | grep $domain | awk -F, '{gsub("\"", "", $2); print $2}' | sort -u > tmp-bufferover-$domain
@@ -85,7 +85,7 @@ bufferover() {
 }
 
 Findomain() {
-	[ "$silent" == True ] && findomain -t $domain -q 2>/dev/null || {
+	[ "$silent" == True ] && findomain -t $domain -q 2>/dev/null | anew subenum-$domain.txt || {
 		printf "$bold[+] Findomain$end"
 		printf "                        \r"
 		findomain -t $domain -u tmp-findomain-$domain &>/dev/null
@@ -94,7 +94,7 @@ Findomain() {
 }
 
 Subfinder() {
-	[ "$silent" == True ] && subfinder -silent -d $domain 2>/dev/null || {
+	[ "$silent" == True ] && subfinder -silent -d $domain 2>/dev/null | anew subenum-$domain.txt || {
 		printf "$bold[+] SubFinder$end"
 		printf "                        \r"
 		subfinder -silent -d $domain 1> tmp-subfinder-$domain 2>/dev/null
@@ -106,7 +106,7 @@ Subfinder() {
 
 Amass() {
 	# amass is with "-passive" option to make it faster, but it may cuz less results
-	[ "$silent" == True ] && amass enum -passive -norecursive -noalts -d $domain 2>/dev/null | tee || {
+	[ "$silent" == True ] && amass enum -passive -norecursive -noalts -d $domain 2>/dev/null | anew subenum-$domain.txt || {
 		printf "$bold[+] Amass$end"
 		printf "                        \r"
 		amass enum -passive -norecursive -noalts -d $domain 1> tmp-amass-$domain 2>/dev/null
@@ -115,7 +115,7 @@ Amass() {
 }
 
 Assetfinder() {
-	[ "$silent" == True ] && assetfinder --subs-only $domain || {
+	[ "$silent" == True ] && assetfinder --subs-only $domain | anew subenum-$domain.txt || {
 		printf "$bold[+] AssetFinder$end"
 		printf "                        \r"
 		assetfinder --subs-only $domain > tmp-assetfinder-$domain
