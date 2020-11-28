@@ -21,6 +21,16 @@ bash script for Subdomain Enumeration using 4 tools and 3 APIs, you have to inst
 	- [crt.sh](https://crt.sh/)
 	- [BufferOver](https://dns.bufferover.run/)
 
+## Installation:
+
+to install the dependencies run:
+
+```bash
+$ git clone https://github.com/bing0o/SubEnum.git
+$ cd SubEnum
+$ chmod +x setup.sh
+$ ./setup.sh
+```
 
 ## Usage:
 
@@ -76,6 +86,12 @@ api.target.com
 
 happy hacking!
 
+
+## Spport:
+
+You can support me here:
+
+<a href="https://www.buymeacoffee.com/bing0o" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-yellow.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
 ## Contributors ✨
 
