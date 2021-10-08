@@ -94,7 +94,7 @@ Findomain() {
 }
 
 Subfinder() {
-	[ "$silent" == True ] && subfinder -silent -d $domain 2>/dev/null | anew subenum-$domain.txt || {
+	[ "$silent" == True ] && subfinder -all -silent -d $domain 2>/dev/null | anew subenum-$domain.txt || {
 		printf "$bold[+] SubFinder$end"
 		printf "                        \r"
 		subfinder -silent -d $domain 1> tmp-subfinder-$domain 2>/dev/null
