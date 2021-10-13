@@ -48,7 +48,7 @@ Httprobe() {
 	printf "[+] Httprobe Installed !.\n"
 }
 
-hash go 2>/dev/null && printf "[!] Golang is already installed.\n" || printf "[+] Installing GOlang!" && GOlang 
+hash go 2>/dev/null && printf "[!] Golang is already installed.\n" || { printf "[+] Installing GOlang!" && GOlang; } 
 source $HOME/.bashrc 2>/dev/null
 source $HOME/.zshrc 2>/dev/null
 
