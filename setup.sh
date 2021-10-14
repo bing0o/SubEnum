@@ -2,17 +2,16 @@
 #
 # bash script to install SubEnum's dependencies 
 #
+
 GOlang() {
 	printf "                                \r"
 	sys=$(uname -m)
-	LATEST=$(curl 'https://golang.org/VERSION?m=text' &>/dev/null)
+	LATEST=$(curl -s 'https://golang.org/VERSION?m=text')
 	[ $sys == "x86_64" ] && wget https://golang.org/dl/$LATEST.linux-amd64.tar.gz -O golang.tar.gz &>/dev/null || wget https://golang.org/dl/$LATEST.linux-386.tar.gz -O golang.tar.gz &>/dev/null
 	sudo tar -C /usr/local -xzf golang.tar.gz
-	echo "export GOROOT=/usr/local/go" >> $HOME/.profile
-	echo "export GOPATH=$HOME/go" >> $HOME/.profile
-	echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> $HOME/.profile
-	echo 'source $HOME/.profile' >> $HOME/.zshrc
-	echo 'source $HOME/.profile' >> $HOME/.bashrc
+	echo "export GOROOT=/usr/local/go" >> $HOME/.bashrc
+	echo "export GOPATH=$HOME/go" >> $HOME/.bashrc
+	echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> $HOME/.bashrc
 	
 	printf "[+] Golang Installed !.\n"
 }
@@ -50,7 +49,6 @@ Httprobe() {
 
 hash go 2>/dev/null && printf "[!] Golang is already installed.\n" || { printf "[+] Installing GOlang!" && GOlang; } 
 source $HOME/.bashrc 2>/dev/null
-source $HOME/.zshrc 2>/dev/null
 
 hash findomain 2>/dev/null && printf "[!] Findomain is already installed.\n" || { printf "[+] Installing Findomain!" && Findomain; }
 hash subfinder 2>/dev/null && printf "[!] subfinder is already installed.\n" || { printf "[+] Installing subfinder!" && Subfinder; }
