@@ -1,13 +1,10 @@
 #!/bin/bash
 #
-# script for subdomain enumeration using 4 of the best tools with some APIs:
+# script for subdomain enumeration using 4 of the best tools and some online services:
 #   * findomain: https://github.com/Edu4rdSHL/findomain
 #   * SubFinder: https://github.com/projectdiscovery/subfinder
 #   * Amass: https://github.com/OWASP/Amass
 #   * AssetFinder: https://github.com/tomnomnom/assetfinder
-#
-# a perl version is being developed by @terminalforlife 
-#   * https://github.com/terminalforlife/PerlProjects/tree/master/source/dominator
 #
 
 bold="\e[1m"
@@ -16,7 +13,7 @@ red="\e[31m"
 green="\e[32m"
 blue="\e[34m"
 end="\e[0m"
-VERSION="2020-05-15"
+VERSION="2022-03-20"
 
 PRG=${0##*/}
 
@@ -25,8 +22,8 @@ Usage(){
 	while read -r line; do
 		printf "%b\n" "$line"
 	done <<-EOF
-	\r$blue
-	\r#Options:
+	\r
+	\r# ${bold}${blue}Options${end}:
 	\r    -d, --domain       - Domain To Enumerate
 	\r    -l, --list         - List of domains
 	\r    -u, --use          - Tools To Be Used ex(Findomain,Subfinder,...,etc)
@@ -36,89 +33,125 @@ Usage(){
 	\r    -k, --keep         - To Keep the TMPs files (the results from each tool).
 	\r    -r, --resolve      - To Probe For Working HTTP and HTTPS Subdomains, (Output: resolved-<DOMAIN>.txt).
 	\r    -t, --thread       - Threads for Httprobe - works with -r/--resolve option (Default: 40)
+	\r    -p, --parallel     - To Use Parallel For Faster Results, Doesn't Work With -e/--exclude or -u/--use. 
 	\r    -h, --help         - Displays this help message and exit.
 	\r    -v, --version      - Displays the version and exit.
 
-	\r#Available Tools:
+	\r# ${bold}${blue}Available Tools${end}:
 	\r	  wayback,crt,bufferover,Findomain,Subfinder,Amass,Assetfinder
 
-	\r#Examples:
-	\r	  - To use a specific Tools:
-	\r		 $PRG -d hackerone.com -u Findomain,wayback,Subfinder
-	\r	  - To exclude a specific Tools:
-	\r		 $PRG -d hackerone.com -e Amass,Assetfinder
-	\r	  - To use all the Tools:
-	\r		 $PRG -d hackerone.com 
-	\r	  - To run SubEnum.sh against a list of domains:
-	\r		 $PRG -l domains.txt
-	\r $end
+	\r# ${bold}${blue}Examples${end}:
+	\r    - To use a specific Tool(s):
+	\r       $PRG -d hackerone.com -u Findomain,wayback,Subfinder
+	\r    - To exclude a specific Tool(s):
+	\r       $PRG -d hackerone.com -e Amass,Assetfinder
+	\r    - To use all the Tools:
+	\r       $PRG -d hackerone.com 
+	\r    - To run SubEnum.sh against a list of domains:
+	\r       $PRG -l domains.txt
+	\r    - Run with parallel for faster results, (Doesn't work with -e/--exclude or -u/--use).
+	\r       1- $PRG --domain target.com --parallel
+	\r       2- $PRG --list domains.txt --parallel
 EOF
 	exit 1
 }
 
 
-wayback() { 
+spinner(){
+	processing="${1}"
+	while true; 
+	do
+		dots=(
+			"/"
+			"-"
+			"\\"
+			"|"
+			)
+		for dot in ${dots[@]};
+		do
+			printf "[${dot}] ${processing} \U1F50E"
+			printf "                                    \r"
+			sleep 0.3
+		done
+		
+	done
+}
+
+
+wayback() {
 	[ "$silent" == True ] && curl -sk "http://web.archive.org/cdx/search/cdx?url=*.$domain&output=txt&fl=original&collapse=urlkey&page=" | awk -F/ '{gsub(/:.*/, "", $3); print $3}' | sort -u | anew subenum-$domain.txt  || {
-		printf "$bold[+] WayBackMachine$end"
-		printf "                        \r"
+		[[ ${PARALLEL} == True ]] || { spinner "${bold}WayBackMachine${end}" &
+			PID="$!"
+		}
 		curl -sk "http://web.archive.org/cdx/search/cdx?url=*.$domain&output=txt&fl=original&collapse=urlkey&page=" | awk -F/ '{gsub(/:.*/, "", $3); print $3}' | sort -u > tmp-wayback-$domain
+		[[ ${PARALLEL} == True ]] || kill ${PID} 2>/dev/null
 		echo -e "$bold[*] WayBackMachine$end: $(wc -l < tmp-wayback-$domain)"
 	}
 }
 
 crt() {
 	[ "$silent" == True ] && curl -sk "https://crt.sh/?q=%.$domain&output=json" | tr ',' '\n' | awk -F'"' '/name_value/ {gsub(/\*\./, "", $4); gsub(/\\n/,"\n",$4);print $4}' | anew subenum-$domain.txt || {
-		printf "$bold[+] crt.sh$end"
-		printf "                        \r"
+		[[ ${PARALLEL} == True ]] || { spinner "${bold}crt.sh${end}" &
+			PID="$!"
+		}
 		curl -sk "https://crt.sh/?q=%.$domain&output=json" | tr ',' '\n' | awk -F'"' '/name_value/ {gsub(/\*\./, "", $4); gsub(/\\n/,"\n",$4);print $4}' | sort -u > tmp-crt-$domain
+		[[ ${PARALLEL} == True ]] || kill ${PID} 2>/dev/null
 		echo -e "$bold[*] crt.sh$end: $(wc -l < tmp-crt-$domain)" 
 	}
 }
 
 bufferover() {
 	[ "$silent" == True ] && curl -s "https://dns.bufferover.run/dns?q=.$domain" | grep $domain | awk -F, '{gsub("\"", "", $2); print $2}' | anew subenum-$domain.txt || {
-		printf "$bold[+] BufferOver$end"
-		printf "                        \r"
+		[[ ${PARALLEL} == True ]] || { spinner "${bold}BufferOver${end}" &
+			PID="$!"
+		}
 		curl -s "https://dns.bufferover.run/dns?q=.$domain" | grep $domain | awk -F, '{gsub("\"", "", $2); print $2}' | sort -u > tmp-bufferover-$domain
+		[[ ${PARALLEL} == True ]] || kill ${PID} 2>/dev/null
 		echo -e "$bold[*] BufferOver$end: $(wc -l < tmp-bufferover-$domain)"
 	}
 }
 
 Findomain() {
 	[ "$silent" == True ] && findomain -t $domain -q 2>/dev/null | anew subenum-$domain.txt || {
-		printf "$bold[+] Findomain$end"
-		printf "                        \r"
+		[[ ${PARALLEL} == True ]] || { spinner "${bold}Findomain${end}" &
+			PID="$!"
+		}
 		findomain -t $domain -u tmp-findomain-$domain &>/dev/null
+		[[ ${PARALLEL} == True ]] || kill ${PID} 2>/dev/null
 		echo -e "$bold[*] Findomain$end: $(wc -l tmp-findomain-$domain 2>/dev/null | awk '{print $1}')"
 	}
 }
 
 Subfinder() {
 	[ "$silent" == True ] && subfinder -all -silent -d $domain 2>/dev/null | anew subenum-$domain.txt || {
-		printf "$bold[+] SubFinder$end"
-		printf "                        \r"
+		[[ ${PARALLEL} == True ]] || { spinner "${bold}SubFinder${end}" &
+			PID="$!"
+		}
 		subfinder -all -silent -d $domain 1> tmp-subfinder-$domain 2>/dev/null
+		[[ ${PARALLEL} == True ]] || kill ${PID} 2>/dev/null
 		echo -e "$bold[*] SubFinder$end: $(wc -l < tmp-subfinder-$domain)"
 	}
 }
 
-
-
 Amass() {
 	# amass is with "-passive" option to make it faster, but it may cuz less results
 	[ "$silent" == True ] && amass enum -passive -norecursive -noalts -d $domain 2>/dev/null | anew subenum-$domain.txt || {
-		printf "$bold[+] Amass$end"
-		printf "                        \r"
+		[[ ${PARALLEL} == True ]] || { spinner "${bold}Amass${end}" &
+			PID="$!"
+		}
 		amass enum -passive -norecursive -noalts -d $domain 1> tmp-amass-$domain 2>/dev/null
+		[[ ${PARALLEL} == True ]] || kill ${PID} 2>/dev/null
 		echo -e "$bold[*] Amass$end: $(wc -l < tmp-amass-$domain)"
 	}
 }
 
 Assetfinder() {
 	[ "$silent" == True ] && assetfinder --subs-only $domain | anew subenum-$domain.txt || {
-		printf "$bold[+] AssetFinder$end"
-		printf "                        \r"
+		[[ ${PARALLEL} == True ]] || { spinner "${bold}AssetFinder${end}" &
+			PID="$!"
+		}
 		assetfinder --subs-only $domain > tmp-assetfinder-$domain
+		kill ${PID} 2>/dev/null
 		echo -e "$bold[*] AssetFinder$end: $(wc -l < tmp-assetfinder-$domain)"
 	}
 }
@@ -168,16 +201,26 @@ LIST() {
 	lines=$(wc -l < $hosts)
 	count=1
 	while read domain; do
-		[ "$silent" == False ] && echo -e "$Underlined$bold$green\n[+] Domain ($count/$lines):$end $domain"
+		[ "$silent" == False ] && echo -e "\n${Underlined}${bold}${green}[+] Domain ($count/$lines):${end} ${domain}"
 		[ $prv == "a" ] && {
-			wayback
-			crt
-			bufferover
-			Findomain 
-			Subfinder 
-			Amass 
-			Assetfinder
-			OUT
+			[[ ${PARALLEL} == True ]] && {
+				spinner "Reconnaissance" &
+				PID="$!"
+				export -f wayback crt bufferover Findomain Subfinder Amass Assetfinder spinner
+				export domain silent bold end
+				parallel ::: wayback crt bufferover Findomain Subfinder Amass Assetfinder
+				kill ${PID}
+				OUT
+			} || {
+				wayback
+				crt
+				bufferover
+				Findomain 
+				Subfinder 
+				Amass 
+				Assetfinder
+				OUT
+			}
 		}
 		[ $prv == "e" ] && EXCLUDE 
 		[ $prv == "u" ] && USE 
@@ -190,13 +233,22 @@ Main() {
 	[ $use != False ] && [ $exclude != False ] && { echo -e $Underlined$red"[!] You can use only one Option: -e/--exclude OR -u/--use"$end; Usage; }
 	[ $domain != False ] && { 
 		[ $use == False ] && [ $exclude == False ] && { 
-			wayback
-			crt
-			bufferover
-			Findomain 
-			Subfinder 
-			Amass 
-			Assetfinder
+			[[ ${PARALLEL} == True ]] && {
+				spinner "Reconnaissance" &
+				PID="$!"
+				export -f wayback crt bufferover Findomain Subfinder Amass Assetfinder spinner
+				export domain silent bold end
+				parallel ::: wayback crt bufferover Findomain Subfinder Amass Assetfinder
+				kill ${PID}
+			} || {
+				wayback
+				crt
+				bufferover
+				Findomain 
+				Subfinder
+				Amass 
+				Assetfinder
+			}
 			[ "$out" == False ] && OUT || OUT $out
 		} || { 
 			[ $use != False ] && USE 
@@ -221,6 +273,7 @@ delete=True
 out=False
 resolve=False
 thread=40
+PARALLEL=False
 
 list=(
 	wayback
@@ -274,6 +327,8 @@ while [ -n "$1" ]; do
 			shift ;;
 		-h|--help)
 			Usage;;
+		-p|--parallel)
+			PARALLEL=True ;;
 		-v|--version)
 			echo "Version: $VERSION"
 			exit 0 ;;
@@ -284,14 +339,14 @@ while [ -n "$1" ]; do
 	shift
 done
 
-[ "$silent" == False ] && echo -e $blue$bold"
+[ "$silent" == False ] && echo -e $blue$bold"""
  ____        _     _____                       
 / ___| _   _| |__ | ____|_ __  _   _ _ __ ___  
 \___ \| | | | '_ \|  _| | '_ \| | | | '_ \` _ \\ 
  ___) | |_| | |_) | |___| | | | |_| | | | | | |
 |____/ \__,_|_.__/|_____|_| |_|\__,_|_| |_| |_|
-           SubDomains Enumeration Tool
+           Subdomains Enumeration Tool
               By: bing0o @hack1lab
-"$end
+"""$end
 
 Main
