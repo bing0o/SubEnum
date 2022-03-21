@@ -1,6 +1,6 @@
 ## Description:
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 bash script for Subdomain Enumeration using 4 tools and 3 online services, you have to install these tools by yourself to be able to use SubEnum.sh, or use [setup.sh](https://github.com/bing0o/SubEnum/blob/master/setup.sh) script to install them.
@@ -112,6 +112,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/secfb"><img src="https://avatars2.githubusercontent.com/u/38748801?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Never Mind</b></sub></a><br /><a href="https://github.com/bing0o/SubEnum/commits?author=secfb" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/mehedi1194"><img src="https://avatars2.githubusercontent.com/u/54717234?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mehedi Hasan Remon</b></sub></a><br /><a href="https://github.com/bing0o/SubEnum/commits?author=mehedi1194" title="Code">💻</a></td>
     <td align="center"><a href="http://alins.ir"><img src="https://avatars.githubusercontent.com/u/67107893?v=4?s=100" width="100px;" alt=""/><br /><sub><b>alins.ir</b></sub></a><br /><a href="https://github.com/bing0o/SubEnum/commits?author=alins1r" title="Code">💻</a></td>
+    <td align="center"><a href="https://0xhunster.github.io"><img src="https://avatars.githubusercontent.com/u/46501627?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Akash Sarkar</b></sub></a><br /><a href="https://github.com/bing0o/SubEnum/commits?author=0xhunster" title="Code">💻</a></td>
   </tr>
 </table>
 
