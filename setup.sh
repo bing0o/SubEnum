@@ -47,6 +47,12 @@ Httprobe() {
 	printf "[+] Httprobe Installed !.\n"
 }
 
+Parallel() {
+	printf "                                \r"
+	sudo apt-get install parallel -y
+	printf "[+] Parallel Installed !.\n"
+}
+
 hash go 2>/dev/null && printf "[!] Golang is already installed.\n" || { printf "[+] Installing GOlang!" && GOlang; } 
 
 export GOROOT=/usr/local/go
@@ -58,6 +64,7 @@ hash subfinder 2>/dev/null && printf "[!] subfinder is already installed.\n" || 
 hash amass 2>/dev/null && printf "[!] Amass is already installed.\n" || { printf "[+] Installing Amass!" && Amass; }
 hash assetfinder 2>/dev/null && printf "[!] Assetfinder is already installed.\n" || { printf "[+] Installing Assetfinder!" && Assetfinder; }
 hash httprobe 2>/dev/null && printf "[!] Httprobe is already installed.\n" || { printf "[+] Installing Httprobe!" && Httprobe; }
+hash parallel 2>/dev/null && printf "[!] Parallel is already installed.\n" || { printf "[+] Installing Parallel!" && Parallel; }
 
 list=(
 	go
@@ -66,6 +73,7 @@ list=(
 	amass
 	assetfinder
 	httprobe
+	Parallel
 	)
 
 r="\e[31m"
