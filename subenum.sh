@@ -208,7 +208,7 @@ LIST() {
 				PID="$!"
 				export -f wayback crt bufferover Findomain Subfinder Amass Assetfinder spinner
 				export domain silent bold end
-				parallel ::: wayback crt bufferover Findomain Subfinder Amass Assetfinder
+				parallel -j7 ::: wayback crt bufferover Findomain Subfinder Amass Assetfinder
 				kill ${PID}
 				OUT
 			} || {
@@ -238,7 +238,7 @@ Main() {
 				PID="$!"
 				export -f wayback crt bufferover Findomain Subfinder Amass Assetfinder spinner
 				export domain silent bold end
-				parallel ::: wayback crt bufferover Findomain Subfinder Amass Assetfinder
+				parallel -j7 ::: wayback crt bufferover Findomain Subfinder Amass Assetfinder
 				kill ${PID}
 			} || {
 				wayback
