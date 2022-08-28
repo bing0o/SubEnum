@@ -13,7 +13,7 @@ red="\e[31m"
 green="\e[32m"
 blue="\e[34m"
 end="\e[0m"
-VERSION="2022-03-20"
+VERSION="2022-08-28"
 
 PRG=${0##*/}
 
@@ -161,7 +161,7 @@ USE() {
 	for i in $lu; do
 		$i
 	done
-	OUT
+	[[ $out != False ]] && OUT $out || out
 }
 
 
@@ -173,14 +173,15 @@ EXCLUDE() {
 			$i
 		fi
 	done
-	OUT
+	[[ $out != False ]] && OUT $out || out
 }
 
 OUT(){
 	[ "$silent" == False ] && { 
 		[ -n "$1" ] && out="$1" || out="$domain-$(date +'%Y-%m-%d').txt"
-		sort -u tmp-* > $out
-		echo -e $green"[+] The Final Results:$end $(wc -l $out)"
+		result=$(sort -u tmp-* | wc -l)
+		sort -u tmp-* >> $out
+		echo -e $green"[+] The Final Results:$end ${result}"
 		[ $resolve == True ] && ALIVE "$out" "$domain"
 
 		[ $delete == True ] && rm tmp-*	
@@ -210,7 +211,7 @@ LIST() {
 				export domain silent bold end
 				parallel -j7 ::: wayback crt bufferover Findomain Subfinder Amass Assetfinder
 				kill ${PID}
-				OUT
+				[[ $out != False ]] && OUT $out || out
 			} || {
 				wayback
 				crt
@@ -219,7 +220,7 @@ LIST() {
 				Subfinder 
 				Amass 
 				Assetfinder
-				OUT
+				[[ $out != False ]] && OUT $out || out
 			}
 		}
 		[ $prv == "e" ] && EXCLUDE 
