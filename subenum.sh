@@ -13,7 +13,7 @@ red="\e[31m"
 green="\e[32m"
 blue="\e[34m"
 end="\e[0m"
-VERSION="2022-08-28"
+VERSION="2022-09-22"
 
 PRG=${0##*/}
 
@@ -161,7 +161,7 @@ USE() {
 	for i in $lu; do
 		$i
 	done
-	[[ $out != False ]] && OUT $out || out
+	[[ $out != False ]] && OUT $out || OUT
 }
 
 
@@ -173,7 +173,7 @@ EXCLUDE() {
 			$i
 		fi
 	done
-	[[ $out != False ]] && OUT $out || out
+	[[ $out != False ]] && OUT $out || OUT
 }
 
 OUT(){
@@ -211,7 +211,7 @@ LIST() {
 				export domain silent bold end
 				parallel -j7 ::: wayback crt bufferover Findomain Subfinder Amass Assetfinder
 				kill ${PID}
-				[[ $out != False ]] && OUT $out || out
+				[[ $out != False ]] && OUT $out || OUT
 			} || {
 				wayback
 				crt
@@ -220,7 +220,7 @@ LIST() {
 				Subfinder 
 				Amass 
 				Assetfinder
-				[[ $out != False ]] && OUT $out || out
+				[[ $out != False ]] && OUT $out || OUT
 			}
 		}
 		[ $prv == "e" ] && EXCLUDE 
