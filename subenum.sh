@@ -178,11 +178,11 @@ EXCLUDE() {
 
 OUT(){
 	[ "$silent" == False ] && { 
-		[ -n "$1" ] && out="$1" || out="$domain-$(date +'%Y-%m-%d').txt"
+		[ -n "$1" ] && output="$1" || output="$domain-$(date +'%Y-%m-%d').txt"
 		result=$(sort -u tmp-* | wc -l)
-		sort -u tmp-* >> $out
+		sort -u tmp-* >> $output
 		echo -e $green"[+] The Final Results:$end ${result}"
-		[ $resolve == True ] && ALIVE "$out" "$domain"
+		[ $resolve == True ] && ALIVE "$output" "$domain"
 
 		[ $delete == True ] && rm tmp-*	
 	}
