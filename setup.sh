@@ -6,8 +6,8 @@
 GOlang() {
 	printf "                                \r"
 	sys=$(uname -m)
-	LATEST=$(curl -s 'https://go.dev/VERSION?m=text')
-	[ $sys == "x86_64" ] && wget https://golang.org/dl/$LATEST.linux-amd64.tar.gz -O golang.tar.gz &>/dev/null || wget https://golang.org/dl/$LATEST.linux-386.tar.gz -O golang.tar.gz &>/dev/null
+	#LATEST=$(curl -s 'https://go.dev/VERSION?m=text') # https://golang.org/dl/$LATEST.linux-amd64.tar.gz
+	[ $sys == "x86_64" ] && wget https://go.dev/dl/go1.17.13.linux-amd64.tar.gz -O golang.tar.gz &>/dev/null || wget https://golang.org/dl/$LATEST.linux-386.tar.gz -O golang.tar.gz &>/dev/null
 	sudo tar -C /usr/local -xzf golang.tar.gz
 	echo "export GOROOT=/usr/local/go" >> $HOME/.bashrc
 	echo "export GOPATH=$HOME/go" >> $HOME/.bashrc
