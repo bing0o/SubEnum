@@ -5,6 +5,7 @@
 #   * SubFinder: https://github.com/projectdiscovery/subfinder
 #   * Amass: https://github.com/OWASP/Amass
 #   * AssetFinder: https://github.com/tomnomnom/assetfinder
+#   * Httpx: https://github.com/projectdiscovery/httpx	
 #
 
 bold="\e[1m"
@@ -194,7 +195,16 @@ ALIVE(){
 	printf "                        \r"
 	cat $1 | httprobe -c $thread > "resolved-$2.txt"
 	[ "$silent" == False ] && echo -e $green"[+] Resolved:$end $(wc -l < resolved-$2.txt)"
+	
+	[ "$silent" == False ] && printf "$bold[+] Resolving $end"
+	printf "                        \r"
+	cat $1 | httpx -silent -follow-redirects $thread > "resolved1-$2.txt"
+	[ "$silent" == False ] && echo -e $green"[+] Resolved:$end $(wc -l < resolved1-$2.txt)"
 
+	[ "$silent" == False ] && printf "$bold[+] Resolving $end"
+	printf "                        \r"
+	cat $1 | httpx --title -follow-redirects -status-code $thread > "resolved2-$2.txt"
+	[ "$silent" == False ] && echo -e $green"[+] Resolved:$end $(wc -l < resolved2-$2.txt)"
 }
 
 
@@ -249,6 +259,7 @@ Main() {
 				Subfinder
 				Amass 
 				Assetfinder
+				Httpx
 			}
 			[ "$out" == False ] && OUT || OUT $out
 		} || { 
@@ -284,6 +295,7 @@ list=(
 	Subfinder 
 	Amass 
 	Assetfinder
+	Httpx
 	)
 
 while [ -n "$1" ]; do
