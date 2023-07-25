@@ -38,13 +38,13 @@ Amass() {
 
 Assetfinder() {
 	printf "                                \r"
-	go get -u github.com/tomnomnom/assetfinder &>/dev/null
+	go install github.com/tomnomnom/assetfinder@latest
 	printf "[+] Assetfinder Installed !.\n"
 }
 
 Httprobe() {
 	printf "                                \r"
-	go get -u github.com/tomnomnom/httprobe
+	go install github.com/tomnomnom/httprobe@latest
 	printf "[+] Httprobe Installed !.\n"
 }
 
