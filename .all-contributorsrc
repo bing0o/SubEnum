@@ -49,6 +49,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Q0120S",
+      "name": "NoobHunter",
+      "avatar_url": "https://avatars.githubusercontent.com/u/72891022?v=4",
+      "profile": "https://github.com/Q0120S",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -56,5 +65,7 @@
   "projectOwner": "bing0o",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true
+  "skipCi": true,
+  "commitType": "docs",
+  "commitConvention": "angular"
 }
