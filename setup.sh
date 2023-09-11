@@ -27,25 +27,25 @@ Findomain() {
 
 Subfinder() {
 	printf "                                \r"
-	GO111MODULE=on go get -u -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder &>/dev/null
+	go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest &>/dev/null
 	printf "[+] Subfinder Installed !.\n"
 }
 
 Amass() {
 	printf "                                \r"
-	go install -v github.com/owasp-amass/amass/v4/...@master
+	go install -v github.com/owasp-amass/amass/v4/...@master &>/dev/null
 	printf "[+] Amass Installed !.\n"
 }
 
 Assetfinder() {
 	printf "                                \r"
-	go install github.com/tomnomnom/assetfinder@latest
+	go install github.com/tomnomnom/assetfinder@latest &>/dev/null
 	printf "[+] Assetfinder Installed !.\n"
 }
 
 Httprobe() {
 	printf "                                \r"
-	go install github.com/tomnomnom/httprobe@latest
+	go install github.com/tomnomnom/httprobe@latest &>/dev/null
 	printf "[+] Httprobe Installed !.\n"
 }
 
