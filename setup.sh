@@ -20,31 +20,32 @@ Findomain() {
 	printf "                                \r"
 	wget https://github.com/Findomain/Findomain/releases/download/8.2.1/findomain-linux.zip &>/dev/null
 	unzip findomain-linux.zip
+ 	rm findomain-linux.zip
 	chmod +x findomain
 	./findomain -h &>/dev/null && { sudo mv findomain /usr/local/bin/; printf "[+] Findomain Installed !.\n"; } || printf "[!] Install Findomain manually: https://github.com/Findomain/Findomain/blob/master/docs/INSTALLATION.md\n"
 }
 
 Subfinder() {
 	printf "                                \r"
-	GO111MODULE=on go get -u -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder &>/dev/null
+	go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest &>/dev/null
 	printf "[+] Subfinder Installed !.\n"
 }
 
 Amass() {
 	printf "                                \r"
-	GO111MODULE=on go get -v github.com/OWASP/Amass/v3/... &>/dev/null
+	go install -v github.com/owasp-amass/amass/v4/...@master &>/dev/null
 	printf "[+] Amass Installed !.\n"
 }
 
 Assetfinder() {
 	printf "                                \r"
-	go install github.com/tomnomnom/assetfinder@latest
+	go install github.com/tomnomnom/assetfinder@latest &>/dev/null
 	printf "[+] Assetfinder Installed !.\n"
 }
 
 Httprobe() {
 	printf "                                \r"
-	go install github.com/tomnomnom/httprobe@latest
+	go install github.com/tomnomnom/httprobe@latest &>/dev/null
 	printf "[+] Httprobe Installed !.\n"
 }
 
