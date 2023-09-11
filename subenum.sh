@@ -38,7 +38,7 @@ Usage(){
 	\r    -v, --version      - Displays the version and exit.
 
 	\r# ${bold}${blue}Available Tools${end}:
-	\r	  wayback,crt,bufferover,Findomain,Subfinder,Amass,Assetfinder
+	\r	  wayback,crt,abuseipdb,bufferover,Findomain,Subfinder,Amass,Assetfinder
 
 	\r# ${bold}${blue}Examples${end}:
 	\r    - To use a specific Tool(s):
@@ -97,6 +97,17 @@ crt() {
 		curl -sk "https://crt.sh/?q=%.$domain&output=json" | tr ',' '\n' | awk -F'"' '/name_value/ {gsub(/\*\./, "", $4); gsub(/\\n/,"\n",$4);print $4}' | sort -u > tmp-crt-$domain
 		[[ ${PARALLEL} == True ]] || kill ${PID} 2>/dev/null
 		echo -e "$bold[*] crt.sh$end: $(wc -l < tmp-crt-$domain)" 
+	}
+}
+
+abuseipdb() {
+	[ "$silent" == True ] && curl -s "https://www.abuseipdb.com/whois/$domain" -H "user-agent: firefox" -b "abuseipdb_session=" | grep -E '<li>\w.*</li>' | sed -E 's/<\/?li>//g' | sed -e "s/$/.$domain/" | anew subenum-$domain.txt || {
+		[[ ${PARALLEL} == True ]] || { spinner "${bold}abuseipdb.sh${end}" &
+			PID="$!"
+		}
+		curl -s "https://www.abuseipdb.com/whois/$domain" -H "user-agent: firefox" -b "abuseipdb_session=" | grep -E '<li>\w.*</li>' | sed -E 's/<\/?li>//g' | sed -e "s/$/.$domain/" | sort -u > tmp-abuseipdb-$domain
+		[[ ${PARALLEL} == True ]] || kill ${PID} 2>/dev/null
+		echo -e "$bold[*] abuseipdb$end: $(wc -l < tmp-abuseipdb-$domain)" 
 	}
 }
 
@@ -207,14 +218,15 @@ LIST() {
 			[[ ${PARALLEL} == True ]] && {
 				spinner "Reconnaissance" &
 				PID="$!"
-				export -f wayback crt bufferover Findomain Subfinder Amass Assetfinder spinner
+				export -f wayback crt abuseipdb bufferover Findomain Subfinder Amass Assetfinder spinner
 				export domain silent bold end
-				parallel -j7 ::: wayback crt bufferover Findomain Subfinder Amass Assetfinder
+				parallel -j7 ::: wayback crt abuseipdb bufferover Findomain Subfinder Amass Assetfinder
 				kill ${PID}
 				[[ $out != False ]] && OUT $out || OUT
 			} || {
 				wayback
 				crt
+				abuseipdb
 				bufferover
 				Findomain 
 				Subfinder 
@@ -237,13 +249,14 @@ Main() {
 			[[ ${PARALLEL} == True ]] && {
 				spinner "Reconnaissance" &
 				PID="$!"
-				export -f wayback crt bufferover Findomain Subfinder Amass Assetfinder spinner
+				export -f wayback crt abuseipdb bufferover Findomain Subfinder Amass Assetfinder spinner
 				export domain silent bold end
-				parallel -j7 ::: wayback crt bufferover Findomain Subfinder Amass Assetfinder
+				parallel -j7 ::: wayback crt abuseipdb bufferover Findomain Subfinder Amass Assetfinder
 				kill ${PID}
 			} || {
 				wayback
 				crt
+				abuseipdb
 				bufferover
 				Findomain 
 				Subfinder
@@ -279,6 +292,7 @@ PARALLEL=False
 list=(
 	wayback
 	crt
+	abuseipdb
 	bufferover
 	Findomain 
 	Subfinder 
