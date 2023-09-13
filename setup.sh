@@ -9,9 +9,13 @@ GOlang() {
 	#LATEST=$(curl -s 'https://go.dev/VERSION?m=text') # https://golang.org/dl/$LATEST.linux-amd64.tar.gz
 	[ $sys == "x86_64" ] && wget https://go.dev/dl/go1.17.13.linux-amd64.tar.gz -O golang.tar.gz &>/dev/null || wget https://golang.org/dl/go1.17.13.linux-386.tar.gz -O golang.tar.gz &>/dev/null
 	sudo tar -C /usr/local -xzf golang.tar.gz
-	echo "export GOROOT=/usr/local/go" >> $HOME/.bashrc
-	echo "export GOPATH=$HOME/go" >> $HOME/.bashrc
-	echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> $HOME/.bashrc
+	export GOROOT=/usr/local/go
+	export GOPATH=$HOME/go
+	export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+	echo "[!] Add The Following Lines To Your ~/.${SHELL}rc file:"
+ 	echo 'export GOROOT=/usr/local/go'
+  	echo 'export GOPATH=$HOME/go'
+   	echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin'
 	
 	printf "[+] Golang Installed !.\n"
 }
@@ -55,11 +59,14 @@ Parallel() {
 	printf "[+] Parallel Installed !.\n"
 }
 
+Anew() {
+	printf "                                \r"
+	go install -v github.com/tomnomnom/anew@latest &>/dev/null
+	printf "[+] Anew Installed !.\n"
+}
+
 hash go 2>/dev/null && printf "[!] Golang is already installed.\n" || { printf "[+] Installing GOlang!" && GOlang; } 
 
-export GOROOT=/usr/local/go
-export GOPATH=$HOME/go
-export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
 hash findomain 2>/dev/null && printf "[!] Findomain is already installed.\n" || { printf "[+] Installing Findomain!" && Findomain; }
 hash subfinder 2>/dev/null && printf "[!] subfinder is already installed.\n" || { printf "[+] Installing subfinder!" && Subfinder; }
@@ -67,6 +74,7 @@ hash amass 2>/dev/null && printf "[!] Amass is already installed.\n" || { printf
 hash assetfinder 2>/dev/null && printf "[!] Assetfinder is already installed.\n" || { printf "[+] Installing Assetfinder!" && Assetfinder; }
 hash httprobe 2>/dev/null && printf "[!] Httprobe is already installed.\n" || { printf "[+] Installing Httprobe!" && Httprobe; }
 hash parallel 2>/dev/null && printf "[!] Parallel is already installed.\n" || { printf "[+] Installing Parallel!" && Parallel; }
+hash anew 2>/dev/null && printf "[!] Anew is already installed.\n" || { printf "[+] Installing Anew!" && Anew; }
 
 list=(
 	go
@@ -76,6 +84,7 @@ list=(
 	assetfinder
 	httprobe
 	Parallel
+ 	Anew
 	)
 
 r="\e[31m"
