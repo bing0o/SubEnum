@@ -83,8 +83,8 @@ list=(
 	amass
 	assetfinder
 	httprobe
-	Parallel
- 	Anew
+	parallel
+ 	anew
 	)
 
 r="\e[31m"
