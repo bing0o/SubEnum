@@ -12,7 +12,7 @@ GOlang() {
 	export GOROOT=/usr/local/go
 	export GOPATH=$HOME/go
 	export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-	echo "[!] Add The Following Lines To Your ~/.${SHELL}rc file:"
+	echo "[!] Add The Following Lines To Your ~/.${SHELL##*/}rc file:"
  	echo 'export GOROOT=/usr/local/go'
   	echo 'export GOPATH=$HOME/go'
    	echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin'
