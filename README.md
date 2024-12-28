@@ -1,6 +1,6 @@
 ## Description:
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 bash script for Subdomain Enumeration using 4 tools and 3 online services, you have to install these tools by yourself to be able to use SubEnum.sh, or use [setup.sh](https://github.com/bing0o/SubEnum/blob/master/setup.sh) script to install them.
@@ -118,6 +118,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://twitter.com/cihanmehmets"><img src="https://avatars.githubusercontent.com/u/7144304?v=4?s=100" width="100px;" alt="Cihan Mehmet DOĞAN (CMD)"/><br /><sub><b>Cihan Mehmet DOĞAN (CMD)</b></sub></a><br /><a href="https://github.com/bing0o/SubEnum/commits?author=cihanmehmet" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Q0120S"><img src="https://avatars.githubusercontent.com/u/72891022?v=4?s=100" width="100px;" alt="NoobHunter"/><br /><sub><b>NoobHunter</b></sub></a><br /><a href="https://github.com/bing0o/SubEnum/commits?author=Q0120S" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://bug-hunter.tk"><img src="https://avatars.githubusercontent.com/u/94289484?v=4?s=100" width="100px;" alt="Sharo_k_h"/><br /><sub><b>Sharo_k_h</b></sub></a><br /><a href="https://github.com/bing0o/SubEnum/commits?author=SharokhAtaie" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://mujtabasec.github.io/"><img src="https://avatars.githubusercontent.com/u/72700323?v=4?s=100" width="100px;" alt="Mujtaba"/><br /><sub><b>Mujtaba</b></sub></a><br /><a href="https://github.com/bing0o/SubEnum/commits?author=mujtabasec" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
