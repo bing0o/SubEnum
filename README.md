@@ -20,7 +20,7 @@ bash script for Subdomain Enumeration using 4 tools and 3 online services, you h
 	- [WayBackMachine](http://web.archive.org/)
 	- [crt.sh](https://crt.sh/)
  	- [AbuseIPDB](https://www.abuseipdb.com/)
-	- [BufferOver](https://dns.bufferover.run/)
+	- ~~[BufferOver](https://dns.bufferover.run/)~~ - No longer available and it has been deleted from the tool.
 
 ## Installation:
 
