@@ -13,7 +13,7 @@ red="\e[31m"
 green="\e[32m"
 blue="\e[34m"
 end="\e[0m"
-VERSION="2022-09-22"
+VERSION="2024-12-28"
 
 PRG=${0##*/}
 
