@@ -159,14 +159,20 @@ Assetfinder() {
 urlscan() {
 	[ "$silent" == True ] && \
 		curl -s "https://urlscan.io/api/v1/search/?q=page.domain:$domain" | \
-		awk -F'"' '/"domain":/ {print $4}' | sort -u | anew subenum-$domain.txt || {
+		awk -F'"' '/"domain":/ {print $4}' | \
+		grep -E "\.${domain}$" | sort -u | anew subenum-$domain.txt || {
+		
 		[[ ${PARALLEL} == True ]] || { spinner "${bold}urlscan.io${end}" & PID="$!"; }
+
 		curl -s "https://urlscan.io/api/v1/search/?q=page.domain:$domain" | \
-		awk -F'"' '/"domain":/ {print $4}' | sort -u > tmp-urlscan-$domain
+		awk -F'"' '/"domain":/ {print $4}' | \
+		grep -E "\.${domain}$" | sort -u > tmp-urlscan-$domain
+
 		[[ ${PARALLEL} == True ]] || kill ${PID} 2>/dev/null
 		echo -e "$bold[*] urlscan.io$end: $(wc -l < tmp-urlscan-$domain)"
 	}
 }
+
 
 
 USE() {
