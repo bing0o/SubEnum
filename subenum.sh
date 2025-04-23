@@ -219,9 +219,9 @@ LIST() {
 			[[ ${PARALLEL} == True ]] && {
 				spinner "Reconnaissance" &
 				PID="$!"
-				export -f wayback crt abuseipdb Findomain Subfinder Amass Assetfinder spinner
+				export -f wayback crt abuseipdb Findomain Subfinder Amass Assetfinder spinner urlscan
 				export domain silent bold end
-				parallel -j7 ::: wayback crt abuseipdb Findomain Subfinder Amass Assetfinder
+				parallel -j7 ::: wayback crt abuseipdb Findomain Subfinder Amass Assetfinder urlscan
 				kill ${PID}
 				[[ $out != False ]] && OUT $out || OUT
 			} || {
@@ -232,6 +232,7 @@ LIST() {
 				Subfinder 
 				Amass 
 				Assetfinder
+				urlscan
 				[[ $out != False ]] && OUT $out || OUT
 			}
 		}
