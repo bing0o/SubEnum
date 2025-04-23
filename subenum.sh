@@ -38,7 +38,7 @@ Usage(){
 	\r    -v, --version      - Displays the version and exit.
 
 	\r# ${bold}${blue}Available Tools${end}:
-	\r	  wayback,crt,abuseipdb,Findomain,Subfinder,Amass,Assetfinder
+	\r	  wayback,crt,abuseipdb,Findomain,Subfinder,Amass,Assetfinder,urlscan
 
 	\r# ${bold}${blue}Examples${end}:
 	\r    - To use a specific Tool(s):
@@ -156,6 +156,18 @@ Assetfinder() {
 	}
 }
 
+urlscan() {
+	[ "$silent" == True ] && \
+		curl -s "https://urlscan.io/api/v1/search/?q=page.domain:$domain" | \
+		awk -F'"' '/"domain":/ {print $4}' | sort -u | anew subenum-$domain.txt || {
+		[[ ${PARALLEL} == True ]] || { spinner "${bold}urlscan.io${end}" & PID="$!"; }
+		curl -s "https://urlscan.io/api/v1/search/?q=page.domain:$domain" | \
+		awk -F'"' '/"domain":/ {print $4}' | sort -u > tmp-urlscan-$domain
+		[[ ${PARALLEL} == True ]] || kill ${PID} 2>/dev/null
+		echo -e "$bold[*] urlscan.io$end: $(wc -l < tmp-urlscan-$domain)"
+	}
+}
+
 
 USE() {
 	for i in $lu; do
@@ -237,9 +249,9 @@ Main() {
 			[[ ${PARALLEL} == True ]] && {
 				spinner "Reconnaissance" &
 				PID="$!"
-				export -f wayback crt abuseipdb Findomain Subfinder Amass Assetfinder spinner
+				export -f wayback crt abuseipdb Findomain Subfinder Amass Assetfinder urlscan spinner
 				export domain silent bold end
-				parallel -j7 ::: wayback crt abuseipdb Findomain Subfinder Amass Assetfinder
+				parallel -j7 ::: wayback crt abuseipdb Findomain Subfinder Amass Assetfinder urlscan
 				kill ${PID}
 			} || {
 				wayback
@@ -249,6 +261,7 @@ Main() {
 				Subfinder
 				Amass 
 				Assetfinder
+				urlscan
 			}
 			[ "$out" == False ] && OUT || OUT $out
 		} || { 
@@ -284,6 +297,7 @@ list=(
 	Subfinder 
 	Amass 
 	Assetfinder
+	urlscan
 	)
 
 while [ -n "$1" ]; do
