@@ -47,10 +47,10 @@ Assetfinder() {
 	printf "[+] Assetfinder Installed !.\n"
 }
 
-Httprobe() {
+Httpx() {
 	printf "                                \r"
-	go install github.com/tomnomnom/httprobe@latest &>/dev/null
-	printf "[+] Httprobe Installed !.\n"
+	go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest &>/dev/null
+	printf "[+] Httpx Installed !.\n"
 }
 
 Parallel() {
@@ -72,7 +72,7 @@ hash findomain 2>/dev/null && printf "[!] Findomain is already installed.\n" || 
 hash subfinder 2>/dev/null && printf "[!] subfinder is already installed.\n" || { printf "[+] Installing subfinder!" && Subfinder; }
 hash amass 2>/dev/null && printf "[!] Amass is already installed.\n" || { printf "[+] Installing Amass!" && Amass; }
 hash assetfinder 2>/dev/null && printf "[!] Assetfinder is already installed.\n" || { printf "[+] Installing Assetfinder!" && Assetfinder; }
-hash httprobe 2>/dev/null && printf "[!] Httprobe is already installed.\n" || { printf "[+] Installing Httprobe!" && Httprobe; }
+hash httpx 2>/dev/null && printf "[!] Httpx is already installed.\n" || { printf "[+] Installing Httpx!" && Httpx; }
 hash parallel 2>/dev/null && printf "[!] Parallel is already installed.\n" || { printf "[+] Installing Parallel!" && Parallel; }
 hash anew 2>/dev/null && printf "[!] Anew is already installed.\n" || { printf "[+] Installing Anew!" && Anew; }
 
@@ -82,7 +82,7 @@ list=(
 	subfinder
 	amass
 	assetfinder
-	httprobe
+	httpx
 	parallel
  	anew
 	)
