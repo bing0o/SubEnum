@@ -32,7 +32,7 @@ Usage(){
 	\r    -s, --silent       - The Only output will be the found subdomains - (Results saved: subenum-<DOMAIN>.txt).
 	\r    -k, --keep         - To Keep the TMPs files (the results from each tool).
 	\r    -r, --resolve      - To Probe For Working HTTP and HTTPS Subdomains, (Output: resolved-<DOMAIN>.txt).
-	\r    -t, --thread       - Threads for Httprobe - works with -r/--resolve option (Default: 40)
+	\r    -t, --thread       - Threads for httpx - works with -r/--resolve option (Default: 40)
 	\r    -p, --parallel     - To Use Parallel For Faster Results, Doesn't Work With -e/--exclude or -u/--use. 
 	\r    -h, --help         - Displays this help message and exit.
 	\r    -v, --version      - Displays the version and exit.
@@ -192,7 +192,7 @@ OUT(){
 ALIVE(){
 	[ "$silent" == False ] && printf "$bold[+] Resolving $end"
 	printf "                        \r"
-	cat $1 | httprobe -c $thread > "resolved-$2.txt"
+	cat $1 | dnsx -silent -threads $thread > "resolved-$2.txt"
 	[ "$silent" == False ] && echo -e $green"[+] Resolved:$end $(wc -l < resolved-$2.txt)"
 
 }
