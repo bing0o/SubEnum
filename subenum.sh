@@ -192,7 +192,7 @@ OUT(){
 ALIVE(){
 	[ "$silent" == False ] && printf "$bold[+] Resolving $end"
 	printf "                        \r"
-	cat $1 | httpx -silent -threads $thread > "resolved-$2.txt"
+	cat $1 | dnsx -silent -threads $thread > "resolved-$2.txt"
 	[ "$silent" == False ] && echo -e $green"[+] Resolved:$end $(wc -l < resolved-$2.txt)"
 
 }

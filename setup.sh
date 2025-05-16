@@ -47,10 +47,10 @@ Assetfinder() {
 	printf "[+] Assetfinder Installed !.\n"
 }
 
-Httpx() {
+Dnsx() {
 	printf "                                \r"
-	go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest &>/dev/null
-	printf "[+] Httpx Installed !.\n"
+	go install -v github.com/projectdiscovery/dnsx/cmd/dnsx@latest &>/dev/null
+	printf "[+] Dnsx Installed !.\n"
 }
 
 Parallel() {
@@ -72,7 +72,7 @@ hash findomain 2>/dev/null && printf "[!] Findomain is already installed.\n" || 
 hash subfinder 2>/dev/null && printf "[!] subfinder is already installed.\n" || { printf "[+] Installing subfinder!" && Subfinder; }
 hash amass 2>/dev/null && printf "[!] Amass is already installed.\n" || { printf "[+] Installing Amass!" && Amass; }
 hash assetfinder 2>/dev/null && printf "[!] Assetfinder is already installed.\n" || { printf "[+] Installing Assetfinder!" && Assetfinder; }
-hash httpx 2>/dev/null && printf "[!] Httpx is already installed.\n" || { printf "[+] Installing Httpx!" && Httpx; }
+hash dnsx 2>/dev/null && printf "[!] Dnsx is already installed.\n" || { printf "[+] Installing Dnsx!" && Dnsx; }
 hash parallel 2>/dev/null && printf "[!] Parallel is already installed.\n" || { printf "[+] Installing Parallel!" && Parallel; }
 hash anew 2>/dev/null && printf "[!] Anew is already installed.\n" || { printf "[+] Installing Anew!" && Anew; }
 
@@ -82,7 +82,7 @@ list=(
 	subfinder
 	amass
 	assetfinder
-	httpx
+	dnsx
 	parallel
  	anew
 	)
