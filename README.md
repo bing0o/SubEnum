@@ -14,13 +14,30 @@ bash script for Subdomain Enumeration using 4 tools and 3 online services, you h
 	- [SubFinder](https://github.com/projectdiscovery/subfinder)
 	- [Amass](https://github.com/OWASP/Amass)
 	- [AssetFinder](https://github.com/tomnomnom/assetfinder)
-	- [Httprobe](https://github.com/tomnomnom/httprobe): To Probe For Working HTTP and HTTPS Subdomains.
+	- [Sublist3r](https://github.com/aboul3la/Sublist3r)
+	- [Gobuster](https://github.com/OJ/gobuster) - DNS mode for subdomain brute forcing
+	- [DNSGen](https://github.com/ProjectAnte/dnsgen) - For generating domain permutations
 	- [anew](https://github.com/tomnomnom/anew): To delete duplicates when using -s/--silent option.
-1. online services:
+	- [Dnsx](https://github.com/projectdiscovery/dnsx): To resolve found subdomains.
+    - [Httprobe](https://github.com/tomnomnom/httprobe): To Probe For Working HTTP and HTTPS 
+	 Subdomains.
+	
+2. Online services:
 	- [WayBackMachine](http://web.archive.org/)
 	- [crt.sh](https://crt.sh/)
- 	- [AbuseIPDB](https://www.abuseipdb.com/)
-	- ~~[BufferOver](https://dns.bufferover.run/)~~ - No longer available and it has been deleted from the tool.
+	- [AbuseIPDB](https://www.abuseipdb.com/)
+	- [HackerTarget](https://hackertarget.com/)
+	- [RapidDNS](https://rapiddns.io/)
+	- [Riddler](https://riddler.io/)
+	- [CertSpotter](https://sslmate.com/certspotter/)
+	- [AlienVault OTX](https://otx.alienvault.com/)
+	- [ThreatCrowd](https://www.threatcrowd.org/)
+
+3. Services that require API keys:
+	- [SecurityTrails](https://securitytrails.com/) - Requires `SECURITYTRAILS_API_KEY` to be set
+	- [GitHub](https://github.com/) - Improved with `GITHUB_TOKEN` if available
+	- [VirusTotal](https://www.virustotal.com/) - Requires `VT_API_KEY` to be set
+	- [Chaos](https://chaos.projectdiscovery.io/) - Requires `CHAOS_API_KEY` to be set
 
 ## Installation:
 
@@ -122,7 +139,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://mujtabasec.github.io/"><img src="https://avatars.githubusercontent.com/u/72700323?v=4?s=100" width="100px;" alt="Mujtaba"/><br /><sub><b>Mujtaba</b></sub></a><br /><a href="https://github.com/bing0o/SubEnum/commits?author=mujtabasec" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Psikoz-coder"><img src="https://avatars.githubusercontent.com/u/200380657?v=4?s=100" width="100px;" alt="Psikoz"/><br /><sub><b>Psikoz</b></sub></a><br /><a href="https://github.com/bing0o/SubEnum/commits?author=Psikoz-coder" title="Code">💻</a></td>
-    </tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ibrahimsql"><img src="https://avatars.githubusercontent.com/u/ibrahimsql?v=4?s=100" width="100px;" alt="ibrahimsql"/><br /><sub><b>ibrahimsql</b></sub></a><br /><a href="https://github.com/bing0o/SubEnum/commits?author=ibrahimsql" title="Code">💻</a></td>
+	    </tr>
   </tbody>
 </table>
 

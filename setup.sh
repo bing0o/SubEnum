@@ -65,6 +65,34 @@ Anew() {
 	printf "[+] Anew Installed !.\n"
 }
 
+Jq() {
+	printf "                                \r"
+	sudo apt-get install jq -y &>/dev/null
+	printf "[+] jq Installed !.\n"
+}
+
+Gobuster() {
+	printf "                                \r"
+	go install github.com/OJ/gobuster/v3@latest &>/dev/null
+	printf "[+] Gobuster Installed !.\n"
+}
+
+Dnsgen() {
+	printf "                                \r"
+	pip3 install dnsgen &>/dev/null
+	printf "[+] DNSGen Installed !.\n"
+}
+
+Sublist3r() {
+	printf "                                \r"
+	git clone https://github.com/aboul3la/Sublist3r.git /tmp/Sublist3r &>/dev/null
+	cd /tmp/Sublist3r
+	pip3 install -r requirements.txt &>/dev/null
+	sudo cp sublist3r.py /usr/local/bin/sublist3r
+	sudo chmod +x /usr/local/bin/sublist3r
+	printf "[+] Sublist3r Installed !.\n"
+}
+
 hash go 2>/dev/null && printf "[!] Golang is already installed.\n" || { printf "[+] Installing GOlang!" && GOlang; } 
 
 
@@ -75,6 +103,17 @@ hash assetfinder 2>/dev/null && printf "[!] Assetfinder is already installed.\n"
 hash dnsx 2>/dev/null && printf "[!] Dnsx is already installed.\n" || { printf "[+] Installing Dnsx!" && Dnsx; }
 hash parallel 2>/dev/null && printf "[!] Parallel is already installed.\n" || { printf "[+] Installing Parallel!" && Parallel; }
 hash anew 2>/dev/null && printf "[!] Anew is already installed.\n" || { printf "[+] Installing Anew!" && Anew; }
+hash jq 2>/dev/null && printf "[!] jq is already installed.\n" || { printf "[+] Installing jq!" && Jq; }
+hash gobuster 2>/dev/null && printf "[!] Gobuster is already installed.\n" || { printf "[+] Installing Gobuster!" && Gobuster; }
+Httprobe() {
+	printf "                                \r"
+	go install -v github.com/tomnomnom/httprobe@latest &>/dev/null
+	printf "[+] Httprobe Installed !.\n"
+}
+
+hash dnsgen 2>/dev/null && printf "[!] dnsgen is already installed.\n" || { printf "[+] Installing dnsgen!" && Dnsgen; }
+hash sublist3r 2>/dev/null && printf "[!] Sublist3r is already installed.\n" || { printf "[+] Installing Sublist3r!" && Sublist3r; }
+hash httprobe 2>/dev/null && printf "[!] Httprobe is already installed.\n" || { printf "[+] Installing Httprobe!" && Httprobe; }
 
 list=(
 	go
@@ -84,7 +123,12 @@ list=(
 	assetfinder
 	dnsx
 	parallel
- 	anew
+	anew
+	jq
+	gobuster
+	dnsgen
+	sublist3r
+	httprobe
 	)
 
 r="\e[31m"
