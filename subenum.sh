@@ -1,11 +1,6 @@
 #!/bin/bash
 #
-# script for subdomain enumeration using 4 of the best tools and some online services:
-#   * findomain: https://github.com/Edu4rdSHL/findomain
-#   * SubFinder: https://github.com/projectdiscovery/subfinder
-#   * Amass: https://github.com/OWASP/Amass
-#   * AssetFinder: https://github.com/tomnomnom/assetfinder
-#
+# Add VirusTotal and SecurityTrails to enum subdomains
 
 bold="\e[1m"
 Underlined="\e[4m"
@@ -14,6 +9,10 @@ green="\e[32m"
 blue="\e[34m"
 end="\e[0m"
 VERSION="2024-12-28"
+
+APIKEYVirustotal="0000000000000000000000000000000"
+APIKEYSecTrails="00000000000000000000000000000000"
+
 
 PRG=${0##*/}
 
@@ -89,12 +88,60 @@ wayback() {
 	}
 }
 
+virustotal() {
+	[ "$silent" == True ] && curl -sk "https://www.virustotal.com/vtapi/v2/domain/report?apikey=20831009ecca0e39a1204b56b25a6064ad0d92256e7d159082fc9651e09d1142&domain=$domain" | jq -r '.subdomains[]' | sort -u | anew subenum-$domain.txt  || {
+		[[ ${PARALLEL} == True ]] || { spinner "${bold}VirusTotal${end}" &
+			PID="$!"
+		}
+		curl -sk "https://www.virustotal.com/vtapi/v2/domain/report?apikey=20831009ecca0e39a1204b56b25a6064ad0d92256e7d159082fc9651e09d1142&domain=$domain" | jq -r '.subdomains[]' | sort -u > tmp-virustotal-$domain
+		[[ ${PARALLEL} == True ]] || kill ${PID} 2>/dev/null
+		echo -e "$bold[*] VirusTotal$end: $(wc -l < tmp-virustotal-$domain)"
+	}
+}
+
+securitytrails() {
+	[ "$silent" == True ] && curl -sk "https://api.securitytrails.com/v1/domain/$domain/subdomains?children_only=false&include_inactive=true" --header "APIKEY: $APIKEYSecTrails" --header "accept: application/json" | jq -r '.subdomains[]' | sed "s/$/.$domain/" | sort -u | anew sectrails-$domain.txt  || {
+		[[ ${PARALLEL} == True ]] || { spinner "${bold}SecurityTrails${end}" &
+			PID="$!"
+		}
+		curl -sk "https://api.securitytrails.com/v1/domain/$domain/subdomains?children_only=false&include_inactive=true" --header 'APIKEY: rGjMzhKpVL3YJipYcJy9LgQtFarLPqIC' --header 'accept: application/json' | jq -r '.subdomains[]' | sed "s/$/.$domain/" | sort -u > tmp-securitytrails-$domain
+		[[ ${PARALLEL} == True ]] || kill ${PID} 2>/dev/null
+		echo -e "$bold[*] SecurityTrails$end: $(wc -l < tmp-securitytrails-$domain)"
+	}
+}
+
+urlscan() {
+	[ "$silent" == True ] && \
+		curl -s "https://urlscan.io/api/v1/search/?q=page.domain:$domain" | \
+		awk -F'"' '/"domain":/ {print $4}' | \
+		grep -E "\.${domain}$" | sort -u | anew subenum-$domain.txt || {
+
+		[[ ${PARALLEL} == True ]] || { spinner "${bold}urlscan${end}" & PID="$!"; }
+
+		curl -s "https://urlscan.io/api/v1/search/?q=page.domain:$domain" | \
+		awk -F'"' '/"domain":/ {print $4}' | \
+		grep -E "\.${domain}$" | sort -u > tmp-urlscan-$domain
+
+		[[ ${PARALLEL} == True ]] || kill ${PID} 2>/dev/null
+		echo -e "$bold[*] urlscan$end: $(wc -l < tmp-urlscan-$domain)"
+	}
+}
+
 crt() {
-	[ "$silent" == True ] && curl -sk "https://crt.sh/?q=%.$domain&output=json" | tr ',' '\n' | awk -F'"' '/name_value/ {gsub(/\*\./, "", $4); gsub(/\\n/,"\n",$4);print $4}' | anew subenum-$domain.txt || {
+    query=$(cat <<-END
+        SELECT
+            ci.NAME_VALUE
+        FROM
+            certificate_and_identities ci
+        WHERE
+            plainto_tsquery('certwatch', '$domain') @@ identities (ci.CERTIFICATE)
+END
+)
+	[ "$silent" == True ] && echo "$query" | psql -t -h crt.sh -p 5432 -U guest certwatch | sed 's/ //g' | egrep ".*.\.$domain" | sed 's/*\.//g' | tr '[:upper:]' '[:lower:]' | sort -u | anew subenum-$domain.txt || {
 		[[ ${PARALLEL} == True ]] || { spinner "${bold}crt.sh${end}" &
 			PID="$!"
 		}
-		curl -sk "https://crt.sh/?q=%.$domain&output=json" | tr ',' '\n' | awk -F'"' '/name_value/ {gsub(/\*\./, "", $4); gsub(/\\n/,"\n",$4);print $4}' | sort -u > tmp-crt-$domain
+		echo "$query" | psql -t -h crt.sh -p 5432 -U guest certwatch | sed 's/ //g' | egrep ".*.\.$domain" | sed 's/*\.//g' | tr '[:upper:]' '[:lower:]' | sort -u > tmp-crt-$domain
 		[[ ${PARALLEL} == True ]] || kill ${PID} 2>/dev/null
 		echo -e "$bold[*] crt.sh$end: $(wc -l < tmp-crt-$domain)" 
 	}
@@ -135,11 +182,11 @@ Subfinder() {
 
 Amass() {
 	# amass is with "-passive" option to make it faster, but it may cuz less results
-	[ "$silent" == True ] && amass enum -passive -norecursive -d $domain 2>/dev/null | anew subenum-$domain.txt || {
+	[ "$silent" == True ] && amass enum -passive -norecursive -noalts -d $domain 2>/dev/null | anew subenum-$domain.txt || {
 		[[ ${PARALLEL} == True ]] || { spinner "${bold}Amass${end}" &
 			PID="$!"
 		}
-		amass enum -passive -norecursive -noalts -d $domain 1> tmp-amass-$domain 2>/dev/null
+		amass enum -passive -norecursive -d $domain 1> tmp-amass-$domain 2>/dev/null
 		[[ ${PARALLEL} == True ]] || kill ${PID} 2>/dev/null
 		echo -e "$bold[*] Amass$end: $(wc -l < tmp-amass-$domain)"
 	}
@@ -207,13 +254,16 @@ LIST() {
 			[[ ${PARALLEL} == True ]] && {
 				spinner "Reconnaissance" &
 				PID="$!"
-				export -f wayback crt abuseipdb Findomain Subfinder Amass Assetfinder spinner
+				export -f wayback virustotal securitytrails urlscan crt abuseipdb Findomain Subfinder Amass Assetfinder spinner
 				export domain silent bold end
-				parallel -j7 ::: wayback crt abuseipdb Findomain Subfinder Amass Assetfinder
+				parallel -j7 ::: wayback virustotal securitytrails urlscan crt abuseipdb Findomain Subfinder Amass Assetfinder
 				kill ${PID}
 				[[ $out != False ]] && OUT $out || OUT
 			} || {
 				wayback
+                virustotal
+                securitytrails
+                urlscan
 				crt
 				abuseipdb
 				Findomain 
@@ -237,12 +287,15 @@ Main() {
 			[[ ${PARALLEL} == True ]] && {
 				spinner "Reconnaissance" &
 				PID="$!"
-				export -f wayback crt abuseipdb Findomain Subfinder Amass Assetfinder spinner
+				export -f wayback virustotal securitytrails urlscan crt abuseipdb Findomain Subfinder Amass Assetfinder spinner
 				export domain silent bold end
-				parallel -j7 ::: wayback crt abuseipdb Findomain Subfinder Amass Assetfinder
+				parallel -j7 ::: wayback virustotal securitytrails urlscan crt abuseipdb Findomain Subfinder Amass Assetfinder
 				kill ${PID}
 			} || {
 				wayback
+                virustotal
+                securitytrails
+                urlscan
 				crt
 				abuseipdb
 				Findomain 
@@ -278,6 +331,9 @@ PARALLEL=False
 
 list=(
 	wayback
+    virustotal
+    securitytrails
+    urlscan
 	crt
 	abuseipdb
 	Findomain 
@@ -345,7 +401,7 @@ done
 / ___| _   _| |__ | ____|_ __  _   _ _ __ ___  
 \___ \| | | | '_ \|  _| | '_ \| | | | '_ \` _ \\ 
  ___) | |_| | |_) | |___| | | | |_| | | | | | |
-|____/ \__,_|_.__/|_____|_| |_|\__,_|_| |_| |_|
+|____/ \_Changed_/By_Arshia |_|\__,_|_| |_| |_|
            Subdomains Enumeration Tool
               By: bing0o @hack1lab
 """$end
