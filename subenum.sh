@@ -135,7 +135,7 @@ Subfinder() {
 
 Amass() {
 	# amass is with "-passive" option to make it faster, but it may cuz less results
-	[ "$silent" == True ] && amass enum -passive -norecursive -noalts -d $domain 2>/dev/null | anew subenum-$domain.txt || {
+	[ "$silent" == True ] && amass enum -passive -norecursive -d $domain 2>/dev/null | anew subenum-$domain.txt || {
 		[[ ${PARALLEL} == True ]] || { spinner "${bold}Amass${end}" &
 			PID="$!"
 		}
